@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class PostController extends Controller
 {
@@ -65,13 +66,39 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        $dataInsert = [
-            'name' => $request->name,
-            'description' => $request->description
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:posts|min:5|max:100',
+            'description' => 'required|min:5|max:50',
+        ], [
+            'name.required' => 'Post name is required.',
+            'name.min' => 'Post name must be at least :min characters.',
+            'name.unique' => 'Post name has already been taken.',
+            'name.max' => 'Post name must be at most :max characters.',
+            'description.required' => 'Post description is required.',
+            'description.min' => 'Post description must be at least :min characters.',
+            'description.max' => 'Post description must be at most :max characters.',
+        ]);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+            return response()->json($errors, 412);
+        }
+
+        $data = [
+            'name' => $request->input('name'),
+            'description' => $request->input('description'),
         ];
-        $this->posts->createPost($dataInsert);
-        return response()->json(['message' => 'Post created successfully'], 201);
+
+        $post = $this->posts->create($data);
+
+        if ($post) {
+            return response()->json(['message' => 'create succes'], 200);
+        } else {
+
+            return response()->json(['message' => 'error'], 400);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -145,17 +172,44 @@ class PostController extends Controller
      */
     public function update(Request $request, string $id)
     {
+        $validator = Validator::make($request->all(), [
+            'name' => 'required|unique:posts|min:5|max:100',
+            'description' => 'required|min:5|max:50',
+        ], [
+            'name.required' => 'Post name is required.',
+            'name.min' => 'Post name must be at least :min characters.',
+            'name.unique' => 'Post name has already been taken.',
+            'name.max' => 'Post name must be at most :max characters.',
+            'description.required' => 'Post description is required.',
+            'description.min' => 'Post description must be at least :min characters.',
+            'description.max' => 'Post description must be at most :max characters.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $post = $this->posts->getOnePost($id);
-        $dataUpdate = [
-            'name' => $request->name,
-            'description' => $request->description
-        ];
+
         if (!$post) {
             return response()->json(['error' => 'Post not found'], 404);
         }
-        $this->posts->updatePost($dataUpdate, $id);
-        return response()->json(['message' => 'Post updated successfully'], 201);
+
+        $dataUpdate = [
+            'name' => $request->input('name'),
+            'description' => $request->input('description')
+        ];
+
+        $updated = $this->posts->updatePost($dataUpdate, $id);
+
+        if (!$updated) {
+            return response()->json(['error' => 'Failed to update post'], 500);
+        }
+
+        return response()->json(['message' => 'Post updated successfully'], 200);
     }
+
+
 
 
     /**

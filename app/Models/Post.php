@@ -10,6 +10,7 @@ class Post extends Model
 {
     use HasFactory;
     public $timestamps = false;
+    protected $fillable = [ 'name','description'];
     protected $table = 'posts';
     public function getAllPosts()
     {
@@ -21,7 +22,7 @@ class Post extends Model
             ->find($id);
         return $posts;
     }
-    public function createPost($data)
+    public function create($data)
     {
         return DB::table($this->table)->insert($data);
     }
