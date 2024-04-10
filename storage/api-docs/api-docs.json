@@ -143,6 +143,10 @@
                                     "description": {
                                         "type": "string",
                                         "example": "This is a new post description"
+                                    },
+                                    "user_id":{
+                                        "type":"integer",
+                                        "example":1
                                     }
                                 },
                                 "type": "object"

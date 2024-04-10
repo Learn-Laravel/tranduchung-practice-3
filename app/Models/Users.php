@@ -20,15 +20,14 @@ class Users extends Model
     public function getAllUser()
     {
         return DB::table('users')
-            ->leftJoin('phones', 'users.id', '=', 'phones.user_id')
-            ->select('users.*', 'phones.number as phone_number')
+            // ->leftJoin('phones', 'users.id', '=', 'phones.user_id')
+            ->leftJoin('posts', 'users.id', '=', 'posts.user_id')
+            ->select('users.*', 'posts.*')
             ->get();
     }
     public function getOneUser($id)
     {
-        $users = Users::with('phone')
-            ->find($id);
-        return $users;
+        return Users::with('phone', 'post')->find($id);
     }
     public function createUser($data)
     {
@@ -45,5 +44,9 @@ class Users extends Model
     public function phone()
     {
         return $this->hasOne(Phone::class, 'user_id', 'id');
+    }
+    public function post()
+    {
+        return $this->hasMany(Phone::class, 'user_id', 'id');
     }
 }

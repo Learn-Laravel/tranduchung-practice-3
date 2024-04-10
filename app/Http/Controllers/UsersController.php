@@ -96,7 +96,7 @@ class UsersController extends Controller
         ];
 
         $user = Users::create($data);
-        $user->phone()->create([
+        $user->post()->create([
             'number' => $request->number,
         ]);
         if ($user) {
@@ -253,6 +253,7 @@ class UsersController extends Controller
             return response()->json(['error' => 'User not found'], 404);
         }
         $user->phone()->delete();
+        $user->post()->delete();
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }

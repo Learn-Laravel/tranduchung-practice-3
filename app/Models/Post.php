@@ -10,7 +10,7 @@ class Post extends Model
 {
     use HasFactory;
     public $timestamps = false;
-    protected $fillable = [ 'name','description'];
+    protected $fillable = [ 'name','description', 'user_id'];
     protected $table = 'posts';
     public function getAllPosts()
     {
@@ -18,18 +18,21 @@ class Post extends Model
     }
     public function getOnePost($id)
     {
-        $posts = DB::table($this->table)
+        $posts = Post::with('user')
             ->find($id);
         return $posts;
     }
-    public function create($data)
-    {
-        return DB::table($this->table)->insert($data);
-    }
+    // public function create($data)
+    // {
+    //     return DB::table($this->table)->insert($data);
+    // }
     public function updatePost($data,$id){
         return DB::table($this->table)->where('id', $id)->update($data);
     }
     public function deletePost($id){
         return DB::table($this->table)->where('id', $id)->delete();
+    }
+    public function user(){
+        return $this->belongsTo(User::class);
     }
 }

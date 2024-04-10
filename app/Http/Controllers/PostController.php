@@ -87,10 +87,10 @@ class PostController extends Controller
         $data = [
             'name' => $request->input('name'),
             'description' => $request->input('description'),
+            'user_id' => $request->input('user_id')
         ];
 
-        $post = $this->posts->create($data);
-
+        $post = Post::create($data);
         if ($post) {
             return response()->json(['message' => 'create succes'], 200);
         } else {
@@ -197,12 +197,12 @@ class PostController extends Controller
 
         $dataUpdate = [
             'name' => $request->input('name'),
-            'description' => $request->input('description')
+            'description' => $request->input('description'),
+            'user_id' => $request->input('user_id')
         ];
 
-        $updated = $this->posts->updatePost($dataUpdate, $id);
-
-        if (!$updated) {
+        $post->update($dataUpdate);
+        if (!$post) {
             return response()->json(['error' => 'Failed to update post'], 500);
         }
 
@@ -239,7 +239,7 @@ class PostController extends Controller
         if (!$post) {
             return response()->json(['error' => 'Post not found'], 404);
         }
-        $this->posts->deletePost($id);
+        $post->user()->delete();
         return response()->json(['message' => 'Post deleted successfully'], 200);
     }
 }
