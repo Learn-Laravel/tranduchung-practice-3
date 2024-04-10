@@ -256,6 +256,14 @@
                                     "password": {
                                         "type": "string",
                                         "example": "password123"
+                                    },
+                                    "password_confirmation": {
+                                        "type": "string",
+                                        "example": "password123"
+                                    },
+                                    "number": {
+                                        "type": "string",
+                                        "example": "0382870032"
                                     }
                                 },
                                 "type": "object"
@@ -350,6 +358,10 @@
                                     "password_confirmation": {
                                         "type": "string",
                                         "example": "password123"
+                                    },
+                                    "number": {
+                                        "type": "string",
+                                        "example": "0382870032"
                                     }
                                 },
                                 "type": "object"

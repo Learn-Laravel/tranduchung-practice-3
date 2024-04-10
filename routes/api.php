@@ -3,6 +3,7 @@ use App\Http\Controllers\PostController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\UsersController;
+use App\Http\Controllers\PhoneController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -15,6 +16,7 @@ use App\Http\Controllers\UsersController;
 */
 Route::resource('posts', PostController::class);
 Route::resource('users', UsersController::class);
+Route::get('phones/{id}', [PhoneController::class, 'show']);
 // Route::get('/posts', [PostController::class,'index']);
 // Route::get('/posts/{id}', [PostController::class,'show']);
 // Route::post('/posts', [PostController::class,'store']);

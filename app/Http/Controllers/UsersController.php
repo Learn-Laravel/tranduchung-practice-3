@@ -1,9 +1,12 @@
 <?php
+
 namespace App\Http\Controllers;
+
 use App\Models\Users;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+
 class UsersController extends Controller
 {
     /**
@@ -54,7 +57,9 @@ class UsersController extends Controller
      *             required={"name", "email", "password"},
      *             @OA\Property(property="name", type="string", example="john_doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *              @OA\Property(property="password_confirmation", type="string", example="password123"),
+     *              @OA\Property(property="number", type="string", example="0382870032")
      *         )
      *     ),
      *    @OA\Response(response=200, description="Create New User" ),
@@ -90,8 +95,10 @@ class UsersController extends Controller
             'password' => $request->password,
         ];
 
-        $user = $this->users->createUser($data);
-
+        $user = Users::create($data);
+        $user->phone()->create([
+            'number' => $request->number,
+        ]);
         if ($user) {
             return response()->json(['message' => 'create succes'], 200);
         } else {
@@ -162,7 +169,9 @@ class UsersController extends Controller
      *                 type="object",
      *                  @OA\Property(property="name", type="string", example="john_doe"),
      *             @OA\Property(property="email", type="string", format="email", example="john@example.com"),
-     *             @OA\Property(property="password", type="string", example="password123")
+     *             @OA\Property(property="password", type="string", example="password123"),
+     *              @OA\Property(property="password_confirmation", type="string", example="password123"),
+     *              @OA\Property(property="number", type="string", example="0382870032")
      *             )
      *         )
      *     ),
@@ -203,11 +212,14 @@ class UsersController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        $dataUpdate = $this->users->updateUser($data, $id);
-        if ($dataUpdate) {
+        $user->update($data);
+
+        $user->phone()->update([
+            'number' => $request->number,
+        ]);
+        if ($user) {
             return response()->json(['message' => 'update succes'], 200);
         } else {
-
             return response()->json(['message' => 'error'], 400);
         }
     }
@@ -240,7 +252,8 @@ class UsersController extends Controller
         if (!$user) {
             return response()->json(['error' => 'User not found'], 404);
         }
-        $this->users->deleteUser($id);
+        $user->phone()->delete();
+        $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
 }
